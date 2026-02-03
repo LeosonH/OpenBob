@@ -2,7 +2,6 @@
 
 A cross-platform Python for fun application for tracking open windows (Windows & macOS) with an immersive "House View" visualization that brings your computer usage to life!
 
-**Features:**
 - **60 FPS** smooth animations with particle effects and sounds
 - **Interactive house** where your apps become characters
 - **Visual effects** - sparkles, dust trails, glowing effects
