@@ -22,12 +22,6 @@ Watch your apps come alive as personas in a cozy house:
 - **Idle time** - Characters wander around the house naturally
 - **Speech bubbles** - See what they're saying in real-time
 
-**The Personas:**
-Your apps become diverse characters:
-- **Known apps**: Chrome (globe), Discord (headphones), Spotify (music note), VS Code (laptop)
-- **Unknown apps**: Diverse people (various genders, skin tones, hair, ages)
-- Multiple instances get numbers: Chrome #2, Chrome #3
-
 **Speech System:**
 - **Entry**: "Hello everyone!", "Just arrived!", "Knock knock!" (when app opens, after initial load)
 - **Active**: "Check this out!", "In the zone!", "Pay attention to me!" (when focused)
