@@ -95,35 +95,6 @@ python main.py
 - Edit `config.py` to change default settings
 - `ALWAYS_ON_TOP = True/False` - Start with window always on top
 
-## Visual Effects
-
-### Particle Effects
-- **Entry Sparkles** - 25 colorful particles burst when apps open (suppressed on initial load)
-- **Walking Dust** - Subtle dust puffs appear while moving (reduced frequency and size)
-- **Exit Poof** - Gray cloud when apps close
-- **Active Glow** - Golden particles float from active window
-
-### Sound Effects
-All sounds are **procedurally generated** (no audio files needed):
-- Door creak when opening
-- Door thump when closing
-- Chimes for hello/goodbye
-- Quiet ambient background
-- **Mute button** to toggle all sounds
-
-### Animations
-- **Walking**: Characters tilt side-to-side and bob (natural pace)
-- **Direction**: Sprites flip based on movement direction
-- **Idle Wandering**: Occasional wandering (12-40s intervals, staggered with per-persona variance)
-- **Idle Speech**: Non-active personas chat randomly (30-90s intervals, independent timing)
-- **Active**: Pulsing golden glow effect
-- **Staggered entry**: On startup, personas enter one at a time (0.5s delays)
-
-### Diversity
-- **40+ diverse person emojis** for unknown apps
-- Various skin tones, genders, hair colors, and ages
-- Inclusive representation
-
 ## Usage Statistics
 
 Click the **Stats** button (bottom-left) to view:
