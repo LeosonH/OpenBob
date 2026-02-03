@@ -161,19 +161,6 @@ window-tracker/
 - Activities randomly selected from app-specific pools
 - Generic activities preserve privacy
 
-### Architecture
-```
-60 FPS Game Loop
-    ↓
-Windows → TimeTracker → View
-    ↓
-Sprite Groups → Update (particles, animations)
-    ↓
-Render Layers (background → furniture → sprites → particles → UI buttons)
-    ↓
-Display
-```
-
 ## Customization
 
 ### Toggle Sound
@@ -230,22 +217,6 @@ IDLE_TEXT_OPTIONS = [
 - Click the **Pin** button (bottom-center) to toggle at runtime
 - Or set default in `config.py`: `ALWAYS_ON_TOP = True`
 
-## Performance
-
-- **CPU**: <1% (60 FPS constant)
-- **Memory**: 80-120 MB
-- **GPU**: Minimal (2D only)
-- **FPS**: Locked at 60
-
-**Optimizations:**
-- Font caching (emoji & FPS display)
-- O(n) particle list filtering
-- Timer-based glow emission (not random)
-- Direct particle rendering (no surface creation)
-- Squared distance checks (no sqrt)
-- Module-level constants (no repeated list creation)
-- Reduced particle emission frequency for dust trails
-
 ## Logging
 
 Logs written to `window_tracker.log`:
@@ -255,7 +226,7 @@ Logs written to `window_tracker.log`:
 - Button interactions
 - Errors and warnings
 
-## Fun Ideas
+## What To Do With This?
 
 - Watch your workflow patterns emerge
 - See which apps dominate your "house"
@@ -278,11 +249,4 @@ Logs written to `window_tracker.log`:
 
 ## License
 
-Free to use and modify!
-
-## Credits
-
-- Built with Python and pygame
-- Procedural sound generation using numpy
-- Emoji-based character visualization
-- Diverse and inclusive representation
+MIT License
