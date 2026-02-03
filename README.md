@@ -30,6 +30,32 @@ Watch your apps come alive as personas in a cozy house:
 - **Staggered timing**: Each persona has independent speech intervals to prevent coordination
 - **Grace period**: 3-second delay before new apps can speak
 
+## Project Structure
+
+```
+window-tracker/
+├── main.py                         # Application entry point
+├── config.py                       # Configuration constants
+├── requirements.txt                # Platform-specific dependencies
+├── core/
+│   ├── data_models.py             # WindowInfo dataclass
+│   ├── window_tracker_base.py     # Abstract tracker interface
+│   ├── window_tracker_windows.py  # Windows implementation (win32gui)
+│   ├── window_tracker_macos.py    # macOS implementation (Quartz/AppKit)
+│   ├── window_tracker_factory.py  # Platform detection & creation
+│   ├── time_tracker.py            # Background thread tracking
+│   ├── personification.py         # Persona generation & mapping
+│   └── simulation.py              # Test simulation mode
+├── gui/
+│   ├── pygame_house_view.py       # Main house visualization (60 FPS)
+│   ├── pygame_sprites.py          # Sprite classes (Persona, Door, Speech)
+│   ├── pygame_particles.py        # Particle system (optimized)
+│   └── pygame_sounds.py           # Procedural sound generation
+└── utils/
+    ├── formatters.py              # Time formatting helpers
+    └── logger.py                  # Logging setup
+```
+
 ## Installation
 
 ### Requirements
@@ -112,32 +138,6 @@ Click the **Stats** button (bottom-left) to view:
 - Shows top 8 apps sorted by total open time
 - Golden highlight for currently active app
 
-## Project Structure
-
-```
-window-tracker/
-├── main.py                         # Application entry point
-├── config.py                       # Configuration constants
-├── requirements.txt                # Platform-specific dependencies
-├── core/
-│   ├── data_models.py             # WindowInfo dataclass
-│   ├── window_tracker_base.py     # Abstract tracker interface
-│   ├── window_tracker_windows.py  # Windows implementation (win32gui)
-│   ├── window_tracker_macos.py    # macOS implementation (Quartz/AppKit)
-│   ├── window_tracker_factory.py  # Platform detection & creation
-│   ├── time_tracker.py            # Background thread tracking
-│   ├── personification.py         # Persona generation & mapping
-│   └── simulation.py              # Test simulation mode
-├── gui/
-│   ├── pygame_house_view.py       # Main house visualization (60 FPS)
-│   ├── pygame_sprites.py          # Sprite classes (Persona, Door, Speech)
-│   ├── pygame_particles.py        # Particle system (optimized)
-│   └── pygame_sounds.py           # Procedural sound generation
-└── utils/
-    ├── formatters.py              # Time formatting helpers
-    └── logger.py                  # Logging setup
-```
-
 ## How It Works
 
 ### Window Tracking
@@ -153,13 +153,6 @@ window-tracker/
 - **Active Time**: Cumulative focus time
 - Background thread with thread-safe dict
 - Mutex locks prevent race conditions
-
-### Personification
-- Maps `hwnd → persona` consistently per session
-- Generates unique names with numbers (Chrome #2, Chrome #3)
-- Diverse emoji pool for inclusive representation
-- Activities randomly selected from app-specific pools
-- Generic activities preserve privacy
 
 ## Customization
 
@@ -249,4 +242,4 @@ Logs written to `window_tracker.log`:
 
 ## License
 
-MIT License
+Creative Commons
