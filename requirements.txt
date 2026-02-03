@@ -1,0 +1,12 @@
+# Core dependencies (all platforms)
+pygame>=2.5.0
+numpy>=1.24.0
+
+# Windows-specific dependencies
+pywin32>=305; sys_platform == 'win32'
+psutil>=5.9.0; sys_platform == 'win32'
+
+# macOS-specific dependencies
+pyobjc-core>=10.0; sys_platform == 'darwin'
+pyobjc-framework-Cocoa>=10.0; sys_platform == 'darwin'
+pyobjc-framework-Quartz>=10.0; sys_platform == 'darwin'
