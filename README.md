@@ -14,15 +14,15 @@ A cross-platform Python for fun application for tracking open windows (Windows &
 ## Features
 
 ### House View
-Watch your apps come alive as personas in a cozy house:
+Watch your apps come alive as personas:
 
-- **Open an app** - Sparkles burst as someone enters through the door
-- **Close an app** - They say goodbye and exit with a poof
+- **Open an app** - Someone enters through the door
+- **Close an app** - They say goodbye and exit through the door
 - **Active window** - Golden glow with floating particles
 - **Idle time** - Characters wander around the house naturally
 - **Speech bubbles** - See what they're saying in real-time
 
-**Speech System:**
+**Speech System (currently hardcoded):**
 - **Entry**: "Hello everyone!", "Just arrived!", "Knock knock!" (when app opens, after initial load)
 - **Active**: "Check this out!", "In the zone!", "Pay attention to me!" (when focused)
 - **Idle**: "Just hanging out", "What's everyone up to?", "Yawn..." (random, 30-90s intervals)
@@ -37,6 +37,9 @@ window-tracker/
 ├── main.py                         # Application entry point
 ├── config.py                       # Configuration constants
 ├── requirements.txt                # Platform-specific dependencies
+├── assets/
+│   └── Spritesheet/               # Kenney roguelike character sprites
+│       └── roguelikeChar_transparent.png
 ├── core/
 │   ├── data_models.py             # WindowInfo dataclass
 │   ├── window_tracker_base.py     # Abstract tracker interface
@@ -44,11 +47,12 @@ window-tracker/
 │   ├── window_tracker_macos.py    # macOS implementation (Quartz/AppKit)
 │   ├── window_tracker_factory.py  # Platform detection & creation
 │   ├── time_tracker.py            # Background thread tracking
-│   ├── personification.py         # Persona generation & mapping
+│   ├── personification.py         # Persona generation & friendly names
 │   └── simulation.py              # Test simulation mode
 ├── gui/
 │   ├── pygame_house_view.py       # Main house visualization (60 FPS)
 │   ├── pygame_sprites.py          # Sprite classes (Persona, Door, Speech)
+│   ├── sprite_loader.py           # Sprite sheet loader & character manager
 │   ├── pygame_particles.py        # Particle system (optimized)
 │   └── pygame_sounds.py           # Procedural sound generation
 └── utils/
@@ -95,19 +99,22 @@ python main.py
 - Edit `config.py` to change default settings
 - `ALWAYS_ON_TOP = True/False` - Start with window always on top
 
+
 ## Usage Statistics
 
 Click the **Stats** button (bottom-left) to view:
-- **App names** with emoji icons
+- **App names** with matching sprite icons from house view
 - **Total open time** - How long each app has been running
 - **Active time** - How long each app has been focused
-- **Usage percentage** - Visual progress bar showing active/total ratio
+- **Focus %** - Visual progress bar showing (active ÷ total) × 100
 - **Color-coded bars**:
-  - Green (>70%) - High focus/usage
-  - Orange (30-70%) - Medium usage
-  - Gray (<30%) - Low usage
+  - Green (>70%) - High focus (actively used most of the time)
+  - Orange (30-70%) - Medium focus (moderate attention)
+  - Gray (<30%) - Low focus (mostly idle/background)
 - Shows top 8 apps sorted by total open time
 - Golden highlight for currently active app
+- Same sprites as house view for visual consistency
+
 
 ## How It Works
 
@@ -190,7 +197,7 @@ Logs written to `window_tracker.log`:
 - Button interactions
 - Errors and warnings
 
-## What To Do With This?
+## What to do with this?
 
 - Watch your workflow patterns emerge
 - See which apps dominate your "house"
@@ -213,4 +220,9 @@ Logs written to `window_tracker.log`:
 
 ## License
 
-Creative Commons
+Creative Commons CC0 1.0
+
+## Credits
+
+- pygame
+- **Character sprites** from [Kenney's Roguelike Pack](https://kenney.nl/assets/roguelike-characters) (CC0 License)

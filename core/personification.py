@@ -2,6 +2,76 @@
 import random
 from typing import Dict, Tuple
 
+# Friendly app names (executable → display name)
+FRIENDLY_APP_NAMES = {
+    # Browsers
+    "chrome": "Chrome",
+    "firefox": "Firefox",
+    "msedge": "Edge",
+    "edge": "Edge",
+    "safari": "Safari",
+    "opera": "Opera",
+    "brave": "Brave",
+
+    # Communication
+    "discord": "Discord",
+    "slack": "Slack",
+    "teams": "Teams",
+    "zoom": "Zoom",
+    "skype": "Skype",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp",
+
+    # Development
+    "code": "VS Code",
+    "vscode": "VS Code",
+    "pycharm": "PyCharm",
+    "intellij": "IntelliJ",
+    "eclipse": "Eclipse",
+    "visualstudio": "Visual Studio",
+    "sublime": "Sublime Text",
+    "atom": "Atom",
+    "vim": "Vim",
+    "emacs": "Emacs",
+
+    # Productivity
+    "winword": "Word",
+    "excel": "Excel",
+    "powerpnt": "PowerPoint",
+    "outlook": "Outlook",
+    "onenote": "OneNote",
+    "notion": "Notion",
+    "evernote": "Evernote",
+    "notepad++": "Notepad++",
+    "notepad": "Notepad",
+
+    # Entertainment
+    "spotify": "Spotify",
+    "vlc": "VLC",
+    "netflix": "Netflix",
+    "youtube": "YouTube",
+    "steam": "Steam",
+    "minecraft": "Minecraft",
+    "roblox": "Roblox",
+
+    # System
+    "explorer": "File Explorer",
+    "finder": "Finder",
+    "cmd": "Command Prompt",
+    "powershell": "PowerShell",
+    "terminal": "Terminal",
+    "calc": "Calculator",
+    "calculator": "Calculator",
+
+    # Design
+    "photoshop": "Photoshop",
+    "illustrator": "Illustrator",
+    "figma": "Figma",
+    "sketch": "Sketch",
+    "gimp": "GIMP",
+    "blender": "Blender",
+}
+
 # Titles/prefixes to personify app names
 TITLES = [
     "Mr.", "Ms.", "Sir", "Lady", "Captain", "Dr.", "Professor",
@@ -122,33 +192,84 @@ class PersonificationManager:
             return persona_info['name'], activity
 
         # Assign a new persona
-        persona = self._assign_persona(process_name)
+        persona = self._assign_persona(process_name, title)
         self._window_to_persona[hwnd] = persona
         activity = self._generate_activity(title, process_name, persona)
 
         return persona['name'], activity
 
-    def _assign_persona(self, process_name: str) -> Dict:
+    def _assign_persona(self, process_name: str, window_title: str = "") -> Dict:
         """Assign a persona to a new window based on process name.
 
         Args:
             process_name: Name of the process
+            window_title: Window title (used for ApplicationFrameHost)
 
         Returns:
             Persona dictionary with name and emoji
         """
         # Clean up process name (remove .exe, etc.)
         clean_name = process_name.replace('.exe', '').replace('.app', '')
-        clean_name = clean_name.strip()
+        clean_name = clean_name.strip().lower()
 
-        # Capitalize first letter
-        if clean_name:
-            base_name = clean_name[0].upper() + clean_name[1:]
+        # Special case: ApplicationFrameHost (Windows UWP) uses window title
+        if 'applicationframehost' in clean_name and window_title:
+            base_name = window_title.strip()
+            # Remove common suffixes
+            for suffix in [' - Microsoft Edge', ' - Chrome', ' - Firefox']:
+                if base_name.endswith(suffix):
+                    base_name = base_name[:-len(suffix)].strip()
+            # If title is too long, truncate
+            if len(base_name) > 30:
+                base_name = base_name[:30].strip()
+            if not base_name:
+                base_name = "UWP App"
+            lookup_key = window_title.lower()
+        # Special case: Terminal/shell interpreters (macOS/Linux) use window title
+        elif clean_name in ['terminal', 'iterm', 'iterm2', 'alacritty', 'kitty', 'wezterm'] and window_title:
+            # Terminal windows - use title which often contains the command or directory
+            base_name = window_title.strip()
+            # Common terminal title formats to clean up
+            if base_name.startswith('~'):
+                base_name = f"Terminal ({base_name})"
+            elif base_name.startswith('/'):
+                # Extract last directory component
+                parts = base_name.rstrip('/').split('/')
+                base_name = f"Terminal ({parts[-1] if parts[-1] else parts[-2]})"
+            # If title is too long, truncate
+            if len(base_name) > 30:
+                base_name = base_name[:30].strip()
+            if not base_name or base_name == clean_name.capitalize():
+                base_name = "Terminal"
+            lookup_key = window_title.lower()
+        # Special case: Python/Java interpreters use window title
+        elif clean_name in ['python', 'python3', 'java', 'javaw', 'node'] and window_title:
+            # Script interpreters - try to extract useful name from title
+            base_name = window_title.strip()
+            if len(base_name) > 30:
+                base_name = base_name[:30].strip()
+            if not base_name:
+                base_name = clean_name.capitalize()
+            lookup_key = window_title.lower()
         else:
-            base_name = "Unknown"
+            # Normal process name handling
+            # Look up friendly name first
+            base_name = None
+            for key, friendly_name in FRIENDLY_APP_NAMES.items():
+                if key in clean_name:
+                    base_name = friendly_name
+                    break
+
+            # Fallback to capitalized process name if no friendly name found
+            if not base_name:
+                if clean_name:
+                    base_name = clean_name[0].upper() + clean_name[1:]
+                else:
+                    base_name = "Unknown"
+            lookup_key = clean_name
 
         # Generate a unique personified name
-        persona_name = self._generate_unique_name(base_name, process_name.lower())
+        persona_name = self._generate_unique_name(base_name, lookup_key)
 
         # Get appropriate emoji
         emoji = self._get_emoji_for_app(process_name.lower())

@@ -361,6 +361,15 @@ class PygameHouseView:
         pygame.display.set_caption("OpenBob - Watch Your Apps Live!")
         self.clock = pygame.time.Clock()
 
+        # Initialize sprite system
+        from pathlib import Path
+        sprite_sheet_path = Path(__file__).parent.parent / 'assets' / 'Spritesheet' / 'roguelikeChar_transparent.png'
+        if sprite_sheet_path.exists():
+            Persona.initialize_sprites(str(sprite_sheet_path))
+            logging.info("Character sprites loaded successfully")
+        else:
+            logging.warning(f"Sprite sheet not found at {sprite_sheet_path}, using emoji fallback")
+
         # Set always on top if enabled in config
         if ALWAYS_ON_TOP:
             set_window_always_on_top(True)
@@ -1108,7 +1117,7 @@ class PygameHouseView:
         """Draw the stats table column headers."""
         y_offset = panel_y + 95
         header_font = pygame.font.Font(None, 26)
-        headers = ["App", "Total Time", "Active Time", "Usage"]
+        headers = ["App", "Total Time", "Active Time", "Focus %"]
         x_positions = [panel_x + 70, panel_x + 330, panel_x + 490, panel_x + 600]
 
         for i, header in enumerate(headers):
@@ -1155,11 +1164,10 @@ class PygameHouseView:
 
         # Display each window with enhanced visuals
         for idx, window in enumerate(sorted_windows[:max_lines]):
-            # Get persona info with emoji
+            # Get persona info
             persona_name, activity = self.personification_manager.get_persona_for_window(
                 window.hwnd, window.title, window.process_name
             )
-            emoji = activity.split()[0] if activity else "🧑"
 
             # Format times using utility function
             total_time_str = format_timedelta(window.total_open_time)
@@ -1180,9 +1188,24 @@ class PygameHouseView:
                 pygame.draw.rect(self.screen, (255, 250, 220), row_rect, border_radius=8)
                 pygame.draw.rect(self.screen, (255, 215, 0), row_rect, 2, border_radius=8)
 
-            # Draw emoji
-            emoji_surf = emoji_font.render(emoji, True, (0, 0, 0))
-            self.screen.blit(emoji_surf, (panel_x + 40, y_offset))
+            # Draw sprite icon (same as house view)
+            if window.hwnd in self._persona_map:
+                # Use the same sprite as in the house view
+                persona = self._persona_map[window.hwnd]
+                if persona.use_sprites and persona.character_sprite:
+                    # Scale down sprite for stats view (1.5x instead of 3x)
+                    small_sprite = pygame.transform.scale(persona.character_sprite, (24, 24))
+                    self.screen.blit(small_sprite, (panel_x + 40, y_offset - 2))
+                else:
+                    # Fallback to emoji
+                    emoji = activity.split()[0] if activity else "🧑"
+                    emoji_surf = emoji_font.render(emoji, True, (0, 0, 0))
+                    self.screen.blit(emoji_surf, (panel_x + 40, y_offset))
+            else:
+                # Window not in house view yet, use emoji fallback
+                emoji = activity.split()[0] if activity else "🧑"
+                emoji_surf = emoji_font.render(emoji, True, (0, 0, 0))
+                self.screen.blit(emoji_surf, (panel_x + 40, y_offset))
 
             # Draw app name (truncate to prevent overflow)
             max_name_length = 20

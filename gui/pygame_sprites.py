@@ -2,25 +2,54 @@
 import pygame
 import random
 import math
+from gui.sprite_loader import CharacterSpriteManager
 
 
 class Persona(pygame.sprite.Sprite):
     """A persona sprite representing an app/window."""
 
+    # Class-level sprite manager (shared across all personas)
+    _sprite_manager = None
+
+    @classmethod
+    def initialize_sprites(cls, sprite_sheet_path):
+        """Initialize the sprite manager for all personas.
+
+        Args:
+            sprite_sheet_path: Path to the sprite sheet file
+        """
+        cls._sprite_manager = CharacterSpriteManager(sprite_sheet_path, scale=3.0)
+
     def __init__(self, emoji, name, pos, speech_text=None):
         """Initialize persona sprite.
 
         Args:
-            emoji: Emoji character to display
+            emoji: Emoji character to display (or sprite identifier)
             name: Persona name
             pos: Starting position (x, y)
             speech_text: Optional speech bubble text
         """
         super().__init__()
-        self.emoji = emoji
+        self.emoji = emoji  # Keep for backwards compatibility
         self.name = name
         self.pos = list(pos)
         self.target_pos = list(pos)
+
+        # Get character sprite from manager
+        if self._sprite_manager:
+            self.character_data = self._sprite_manager.get_next_character()
+            # Store the single sprite for this character (no animation to prevent blinking)
+            self.character_sprite = self.character_data['idle']
+            self.use_sprites = True
+
+            # Cache for flipped version
+            self._cached_sprite = None
+            self._cached_facing_right = True
+        else:
+            # Fallback to emoji if sprites not initialized
+            self.use_sprites = False
+            self.character_data = None
+            self.character_sprite = None
 
         # Animation state
         self.bob_time = random.random() * math.pi * 2  # Random start phase
@@ -80,31 +109,47 @@ class Persona(pygame.sprite.Sprite):
         pygame.draw.ellipse(shadow_surf, (0, 0, 0, shadow_alpha), shadow_surf.get_rect())
         self.image.blit(shadow_surf, (20, 75))
 
-        # Draw emoji (with walking tilt)
-        scale = 1.0 + math.sin(self.scale_pulse) * 0.05
-        font_size = int(48 * scale)
+        # Draw character (sprite or emoji fallback)
+        if self.use_sprites and self.character_sprite:
+            # Use single sprite frame (no animation) for stability
+            # Only flip if direction changed
+            if self._cached_sprite is None or self._cached_facing_right != self.facing_right:
+                if not self.facing_right and self.is_moving:
+                    self._cached_sprite = pygame.transform.flip(self.character_sprite, True, False)
+                else:
+                    self._cached_sprite = self.character_sprite
+                self._cached_facing_right = self.facing_right
 
-        # Use cached font or create new one
-        if font_size not in self._emoji_font_cache:
-            try:
-                self._emoji_font_cache[font_size] = pygame.font.SysFont('segoeuiemoji,applesymbolsbook,notocoloremoji', font_size)
-            except:
-                self._emoji_font_cache[font_size] = pygame.font.Font(None, font_size)
+            # Blit the stable cached sprite
+            char_rect = self._cached_sprite.get_rect(center=(50, 35 + bob_offset))
+            self.image.blit(self._cached_sprite, char_rect)
 
-        font = self._emoji_font_cache[font_size]
-        emoji_surf = font.render(self.emoji, True, (0, 0, 0))
+        else:
+            # Fallback to emoji rendering
+            scale = 1.0 + math.sin(self.scale_pulse) * 0.05
+            font_size = int(48 * scale)
 
-        # Flip if facing left
-        if not self.facing_right and self.is_moving:
-            emoji_surf = pygame.transform.flip(emoji_surf, True, False)
+            # Use cached font or create new one
+            if font_size not in self._emoji_font_cache:
+                try:
+                    self._emoji_font_cache[font_size] = pygame.font.SysFont('segoeuiemoji,applesymbolsbook,notocoloremoji', font_size)
+                except:
+                    self._emoji_font_cache[font_size] = pygame.font.Font(None, font_size)
 
-        # Apply walking tilt
-        if self.is_moving and self.walk_speed > 0.5:
-            tilt = math.sin(self.walk_frame * 4) * 5
-            emoji_surf = pygame.transform.rotate(emoji_surf, tilt)
+            font = self._emoji_font_cache[font_size]
+            emoji_surf = font.render(self.emoji, True, (0, 0, 0))
 
-        emoji_rect = emoji_surf.get_rect(center=(50, 35 + bob_offset))
-        self.image.blit(emoji_surf, emoji_rect)
+            # Flip if facing left
+            if not self.facing_right and self.is_moving:
+                emoji_surf = pygame.transform.flip(emoji_surf, True, False)
+
+            # Apply walking tilt
+            if self.is_moving and self.walk_speed > 0.5:
+                tilt = math.sin(self.walk_frame * 4) * 5
+                emoji_surf = pygame.transform.rotate(emoji_surf, tilt)
+
+            emoji_rect = emoji_surf.get_rect(center=(50, 35 + bob_offset))
+            self.image.blit(emoji_surf, emoji_rect)
 
         # Draw name (cached since it never changes)
         if self._name_surface_cache is None:
