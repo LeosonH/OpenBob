@@ -2,14 +2,7 @@
 
 A cross-platform Python for fun application for tracking open windows (Windows & macOS) with an immersive "House View" visualization that brings your computer usage to life!
 
-- **60 FPS** smooth animations with particle effects and sounds
-- **Interactive house** where your apps become characters
-- **Visual effects** - sparkles, dust trails, glowing effects
-- **Procedural sounds** - no audio files needed
-- **Speech bubbles** - see what your apps are "saying"
-- **Wandering behavior** - apps move around naturally
-- **Usage statistics** - track time spent in each app
-- **Always-on-top mode** - keep window visible while working
+!OpenBob gif]([https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif](https://raw.githubusercontent.com/LeosonH/OpenBob/refs/heads/main/misc/openbob.gif))
 
 ## Features
 
