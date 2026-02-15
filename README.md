@@ -2,7 +2,7 @@
 
 A cross-platform Python for fun application for tracking open windows (Windows & macOS) with an immersive "House View" visualization that brings your computer usage to life!
 
-![OpenBob gif](https://raw.githubusercontent.com/LeosonH/OpenBob/refs/heads/main/misc/openbob.gif)
+<img src="https://raw.githubusercontent.com/LeosonH/OpenBob/refs/heads/main/misc/openbob.gif" width="40" height="40" />
 
 ## Features
 
