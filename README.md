@@ -1,6 +1,6 @@
 # OpenBob - Watch Your Apps and Windows Do Things
 
-A cross-platform Python for fun application for tracking open windows (Windows & macOS) with an immersive "House View" visualization that brings your computer usage to life!
+A cross-platform Python application for tracking open windows (Windows & macOS) with an immersive "House View" visualization that brings your computer usage to life!
 
 <img src="https://raw.githubusercontent.com/LeosonH/OpenBob/refs/heads/main/misc/openbob.gif" width="480" height="480" />
 
